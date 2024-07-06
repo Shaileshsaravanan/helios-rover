@@ -71,7 +71,6 @@
                     const latLng = path.getAt(i);
                     coordinates.push({lat: latLng.lat(), lng: latLng.lng()});
                 }
-                document.getElementById('path-coordinates').textContent = JSON.stringify(coordinates, null, 2);
                 
                 // Generate KML
                 let kml = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -91,13 +90,21 @@
                 kml += '  </Document>\n';
                 kml += '</kml>';
 
-                const blob = new Blob([kml], { type: 'application/vnd.google-earth.kml+xml' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'path.kml';
-                a.click();
-                URL.revokeObjectURL(url);
+                // Send KML to server
+                fetch('/process_kml', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/xml',
+                    },
+                    body: kml,
+                }).then(response => response.text())
+                  .then(data => {
+                      console.log(data);
+                      alert('Path processed successfully!');
+                  }).catch(error => {
+                      console.error('Error:', error);
+                      alert('An error occurred while processing the path.');
+                  });
             } else {
                 alert("Please draw a path first.");
             }
