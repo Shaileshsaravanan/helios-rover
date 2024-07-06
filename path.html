@@ -72,6 +72,32 @@
                     coordinates.push({lat: latLng.lat(), lng: latLng.lng()});
                 }
                 document.getElementById('path-coordinates').textContent = JSON.stringify(coordinates, null, 2);
+                
+                // Generate KML
+                let kml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+                kml += '<kml xmlns="http://www.opengis.net/kml/2.2">\n';
+                kml += '  <Document>\n';
+                kml += '    <Placemark>\n';
+                kml += '      <LineString>\n';
+                kml += '        <coordinates>\n';
+
+                coordinates.forEach(coord => {
+                    kml += `          ${coord.lng},${coord.lat},0\n`;
+                });
+
+                kml += '        </coordinates>\n';
+                kml += '      </LineString>\n';
+                kml += '    </Placemark>\n';
+                kml += '  </Document>\n';
+                kml += '</kml>';
+
+                const blob = new Blob([kml], { type: 'application/vnd.google-earth.kml+xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'path.kml';
+                a.click();
+                URL.revokeObjectURL(url);
             } else {
                 alert("Please draw a path first.");
             }
