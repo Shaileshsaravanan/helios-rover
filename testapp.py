@@ -5,7 +5,6 @@ from io import StringIO
 app = Flask(__name__)
 
 def move_rover_to_coordinate(lat, lng):
-    #to be implemented later
     print(f"Moving rover to latitude: {lat}, longitude: {lng}")
 
 def process_kml(kml_string):
