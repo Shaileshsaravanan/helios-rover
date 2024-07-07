@@ -1,132 +1,52 @@
-import tensorflow as tf
+import tensorflow as tf  # Import TensorFlow for compatibility with Keras
+from tensorflow.keras.models import load_model  # Use tf.keras instead of keras
+import cv2  # Install opencv-python
 import numpy as np
-import base64
-from io import BytesIO
-from PIL import Image
-import cv2 as cv
-import time
-import json
 
-# Sample data: list of base64 images
-data = []
-
-# Image parameters
-img_height, img_width = 224, 224
-
-# Function to decode base64 image
-def decode_base64_image(base64_string):
-    image_data = base64.b64decode(base64_string)
-    image = Image.open(BytesIO(image_data))
-    image = image.resize((img_height, img_width))
-    return np.array(image)
-
-# Function to encode image to base64
-def encode_base64_image(image):
-    _, buffer = cv.imencode('.jpg', image)
-    encoded_image = base64.b64encode(buffer).decode('utf-8')
-    return encoded_image
-
-# Prepare the dataset
-images = [decode_base64_image(base64_image) for base64_image in data]
-labels = np.ones(len(images))  # All images belong to the single class
-
-images = np.array(images) / 255.0
-labels = tf.keras.utils.to_categorical(labels, num_classes=2)  # Two classes: object present or not
-
-# Split the data into training and validation sets
-split_index = int(0.8 * len(images))
-train_images, train_labels = images[:split_index], labels[:split_index]
-val_images, val_labels = images[split_index:], labels[split_index:]
-
-# Define the model
-base_model = tf.keras.applications.MobileNetV2(
-    input_shape=(img_height, img_width, 3),
-    include_top=False,
-    weights='imagenet'
-)
-base_model.trainable = False
-
-x = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
-x = tf.keras.layers.Dense(1024, activation='relu')(x)
-output = tf.keras.layers.Dense(2, activation='softmax')(x)
-model = tf.keras.models.Model(inputs=base_model.input, outputs=output)
-
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-# Train the model
-model.fit(train_images, train_labels, validation_data=(val_images, val_labels), epochs=10)
-
-# Save the model
-model_save_path = 'model.h5'
-model.save(model_save_path)
+# Disable scientific notation for clarity
+np.set_printoptions(suppress=True)
 
 # Load the model
-model = tf.keras.models.load_model(model_save_path)
+model = tf.keras.models.load_model("Converted Keras/keras_model.h5", compile=False)
 
-# Open a connection to the webcam
-cap = cv.VideoCapture(0)
+# Load the labels
+class_names = open("Converted Keras/labels.txt", "r").readlines()
 
-# Variables to store the last seen object and time
-last_seen_object = False
-last_seen_time = 0
-
-# List to store detections
-detections = []
-
-def check_and_print(predictions, frame):
-    global last_seen_object, last_seen_time, detections
-
-    class_confidence = predictions[0][1]  # Confidence for the class
-
-    if class_confidence > 0.5:
-        current_time = time.time()
-        if not last_seen_object or (current_time - last_seen_time) > 5:  # 5 seconds interval
-            print(f"Object detected with confidence: {class_confidence * 100:.2f}%")
-            last_seen_object = True
-            last_seen_time = current_time
-
-            # Encode the frame as base64
-            encoded_image = encode_base64_image(frame)
-
-            # Store detection
-            detection = {
-                'image': encoded_image,
-                'confidence': class_confidence * 100
-            }
-            detections.append(detection)
-    else:
-        if last_seen_object:
-            print("Object not detected")
-            last_seen_object = False
+# CAMERA can be 0 or 1 based on default camera of your computer
+camera = cv2.VideoCapture(0)
 
 while True:
-    ret, frame = cap.read()
-    if not ret:
+    # Grab the webcamera's image.
+    ret, image = camera.read()
+
+    # Resize the raw image into (224-height,224-width) pixels
+    image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
+
+    # Show the image in a window
+    cv2.imshow("Webcam Image", image)
+
+    # Make the image a numpy array and reshape it to the models input shape.
+    image = np.asarray(image, dtype=np.float32).reshape(1, 224, 224, 3)
+
+    # Normalize the image array
+    image = (image / 127.5) - 1
+
+    # Predicts the model
+    prediction = model.predict(image)
+    index = np.argmax(prediction)
+    class_name = class_names[index]
+    confidence_score = prediction[0][index]
+
+    # Print prediction and confidence score
+    print("Class:", class_name[2:], end="")
+    print("Confidence Score:", str(np.round(confidence_score * 100))[:-2], "%")
+
+    # Listen to the keyboard for presses.
+    keyboard_input = cv2.waitKey(1)
+
+    # 27 is the ASCII for the esc key on your keyboard.
+    if keyboard_input == 27:
         break
 
-    # Preprocess the frame
-    img = cv.resize(frame, (img_height, img_width))
-    img = np.expand_dims(img, axis=0)
-    img = img / 255.0
-
-    # Predict the class of the frame
-    predictions = model.predict(img)
-
-    # Check and print the result
-    check_and_print(predictions, frame)
-
-    # Show the webcam feed
-    cv.imshow("Webcam Feed", frame)
-    
-    if cv.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release the webcam and close windows
-cap.release()
-cv.destroyAllWindows()
-
-# Save detections to a JSON file
-with open('detections.json', 'w') as f:
-    json.dump(detections, f)
-
-print(f"Detections saved to detections.json")
+camera.release()
+cv2.destroyAllWindows()
