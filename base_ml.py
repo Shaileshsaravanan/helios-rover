@@ -110,7 +110,7 @@ def train_and_predict():
     print("Model trained. Ready for predictions.")
     start_predicting(model)
 
-def start_predicting(model):
+def start_predicting(model, mobilenet):
     cap = cv2.VideoCapture(0)
     while True:
         ret, frame = cap.read()
@@ -124,6 +124,12 @@ def start_predicting(model):
         predictions = model.predict(features)
         prediction_prob = predictions[0][0]
         prediction_label = "Object Present" if prediction_prob > 0.5 else "No Object"
+
+        if prediction_prob > 0.95:
+            _, buffer = cv2.imencode('.jpg', frame)
+            base64_str = base64.b64encode(buffer).decode('utf-8')
+            print(f"Detection Accuracy: {prediction_prob:.2f} - Detected Object")
+            print(f"Base64 Encoded Image: {base64_str}")
 
         print(f"Prediction Probability: {prediction_prob:.2f} - {prediction_label}")
 
