@@ -55,7 +55,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
-model.fit(train_dataset, epochs=10, validation_data=val_dataset)
+model.fit(train_dataset, epochs=20, validation_data=val_dataset)
 
 model.save('object_detection_model.keras')
 
@@ -70,12 +70,16 @@ def predict_object(frame):
         print(f"Object is not present with confidence {confidence:.2f}")
 
 model = tf.keras.models.load_model('object_detection_model.keras')
-
 cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Error: Could not open video device.")
+    exit()
 
 while True:
     ret, frame = cap.read()
     if not ret:
+        print("Error: Could not read frame.")
         break
 
     predict_object(frame)
