@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Transfer Learning - TensorFlow.js</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css">
   </head>  
   <body>    
@@ -18,11 +16,7 @@
     <button class="dataCollector" data-1hot="1" data-name="Class 2">Gather Class 2 Data</button>
     <button id="train">Train &amp; Predict!</button>
     <button id="reset">Reset</button>
-
-    <!-- Import TensorFlow.js library -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js" type="text/javascript"></script>
-
-    <!-- Import the page's JavaScript to do some stuff -->
     <script type="module" src="/script.js"></script>
   </body>
 </html>
@@ -62,7 +56,6 @@
     }
 </style>
 <script>
-    // Key constants
 const STATUS = document.getElementById('status');
 const VIDEO = document.getElementById('webcam');
 const ENABLE_CAM_BUTTON = document.getElementById('enableCam');
@@ -73,7 +66,6 @@ const MOBILE_NET_INPUT_HEIGHT = 224;
 const STOP_DATA_GATHER = -1;
 const CLASS_NAMES = [];
 
-// Add key event listeners
 ENABLE_CAM_BUTTON.addEventListener('click', enableCam);
 TRAIN_BUTTON.addEventListener('click', trainAndPredict);
 RESET_BUTTON.addEventListener('click', reset);
@@ -82,11 +74,9 @@ let dataCollectorButtons = document.querySelectorAll('button.dataCollector');
 for (let i = 0; i < dataCollectorButtons.length; i++) {
   dataCollectorButtons[i].addEventListener('mousedown', gatherDataForClass);
   dataCollectorButtons[i].addEventListener('mouseup', gatherDataForClass);
-  // Populate the human readable names for classes.
   CLASS_NAMES.push(dataCollectorButtons[i].getAttribute('data-name'));
 }
 
-// Variables for storing model and data
 let mobilenet = undefined;
 let gatherDataState = STOP_DATA_GATHER;
 let videoPlaying = false;
@@ -95,24 +85,18 @@ let trainingDataOutputs = [];
 let examplesCount = [];
 let predict = false;
 
-// Load the MobileNet base model
 async function loadMobileNetFeatureModel() {
   const URL = 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1';
-  
   mobilenet = await tf.loadGraphModel(URL, {fromTFHub: true});
   STATUS.innerText = 'MobileNet v3 loaded successfully!';
-  
-  // Warm up the model by passing zeros through it once.
-  tf.tidy(function () {
+    tf.tidy(function () {
     let answer = mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3]));
-    console.log(answer.shape);  // Should log the shape of the output features, e.g., [1, 1024]
+    console.log(answer.shape);  
   });
 }
 
-// Call the function immediately to start loading.
 loadMobileNetFeatureModel();
 
-// Enable the webcam
 async function enableCam() {
   if (videoPlaying) {
     STATUS.innerText = 'Webcam is already enabled.';
@@ -128,7 +112,6 @@ async function enableCam() {
   STATUS.innerText = 'Webcam enabled.';
 }
 
-// Gather data for a specific class
 function gatherDataForClass(event) {
   if (gatherDataState === STOP_DATA_GATHER) return;
   const classId = parseInt(gatherDataState);
@@ -155,7 +138,6 @@ function gatherData() {
   STATUS.innerText = `Gathering data for class ${CLASS_NAMES[gatherDataState]} (${examplesCount[gatherDataState]} examples)`;
 }
 
-// Train the model and make predictions
 async function trainAndPredict() {
   if (!mobilenet) {
     STATUS.innerText = 'Load the MobileNet model first!';
@@ -175,7 +157,6 @@ async function trainAndPredict() {
   startPredicting(model);
 }
 
-// Prediction loop
 async function startPredicting(model) {
   while (predict) {
     const videoFrame = VIDEO;
@@ -188,7 +169,6 @@ async function startPredicting(model) {
   }
 }
 
-// Reset the data collection and model
 function reset() {
   STATUS.innerText = 'Resetting...';
   trainingDataInputs = [];
@@ -204,14 +184,9 @@ model.add(tf.layers.dense({units: CLASS_NAMES.length, activation: 'softmax'}));
 
 model.summary();
 
-// Compile the model with the defined optimizer and specify a loss function to use.
 model.compile({
-  // Adam changes the learning rate over time which is useful.
   optimizer: 'adam',
-  // Use the correct loss function. If 2 classes of data, must use binaryCrossentropy.
-  // Else categoricalCrossentropy is used if more than 2 classes.
   loss: (CLASS_NAMES.length === 2) ? 'binaryCrossentropy': 'categoricalCrossentropy', 
-  // As this is a classification problem you can record accuracy in the logs too!
   metrics: ['accuracy']  
 });
 function hasGetUserMedia() {
@@ -220,14 +195,12 @@ function hasGetUserMedia() {
 
 function enableCam() {
   if (hasGetUserMedia()) {
-    // getUsermedia parameters.
     const constraints = {
       video: true,
       width: 640, 
       height: 480 
     };
 
-    // Activate the webcam stream.
     navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
       VIDEO.srcObject = stream;
       VIDEO.addEventListener('loadeddata', function() {
@@ -239,9 +212,7 @@ function enableCam() {
     console.warn('getUserMedia() is not supported by your browser');
   }
 }
-/**
- * Handle Data Gather for button mouseup/mousedown.
- **/
+
  function gatherDataForClass() {
   let classNumber = parseInt(this.getAttribute('data-1hot'));
   gatherDataState = (gatherDataState === STOP_DATA_GATHER) ? classNumber : STOP_DATA_GATHER;
