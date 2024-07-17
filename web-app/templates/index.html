@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/static/tailwind.js"></script>
+        <script src="/static/flowbite.js"></script>
+        <style src="/static/flowbite.min.css"></style>
+    </head>
+    <style>
+        .splash-screen {
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        .zoom-in {
+            transform: scale(1.2);
+        }
+    </style>
+    <body class="bg-gray-100 flex flex-col min-h-screen overflow-hidden">
+        <div id="splash-screen" class="splash-screen fixed inset-0 bg-white flex items-center justify-center z-50">
+            <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900">helios.</h2>
+        </div>    
+        <div>
+            <div class="m-5 mt-8 card-shadow rounded-2xl h-96 border card-border-color overflow-hidden flex flex-col relative text-color card-background-color">
+                <div class="p-4 sticky top-0 z-10">
+                   <div class="flex items-center gap-1.5">
+                      <div>helios.</div>
+                   </div>
+                </div>
+                <div class="absolute -top-4 -left-16 -translate-y-1/2 rounded-full w-96 h-96 blur-3xl mix-blend opacity" style="top: 24rem; left: -14rem; background-color: rgb(184, 250, 221);"></div>
+                <div class="absolute -top-48 left-1/2 -translate-x-1/2 rounded-full w-96 h-96 blur-3xl mix-blend" style="background-color: rgb(67, 229, 160);"></div>
+                <div class="absolute top-36 left-6">
+                   <div class="flex items-start">
+                      <div class="text-6xl font-normal tracking-tighter text-color">Map</div>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-8 h-8 ml-3" style="color: rgb(16, 133, 84);">
+                         <path fill-rule="evenodd" d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z" clip-rule="evenodd"></path>
+                      </svg>
+                   </div>
+                   <div class="mt-4 text-color-muted" style="color: rgb(3, 48, 31);">Start mapping your farm and provide a path for the rover</div>
+                </div>
+             </div>
+             <div>
+                
+             </div>
+        </div>
+    </body>   
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const splashScreen = document.getElementById('splash-screen');
+        const mainContent = document.getElementById('main-content');
+
+        splashScreen.classList.add('zoom-in');
+        setTimeout(() => {
+            splashScreen.style.opacity = 0;
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+                mainContent.classList.remove('hidden');
+            }, 1000);
+        }, 3000); 
+    });
+
+</script>
