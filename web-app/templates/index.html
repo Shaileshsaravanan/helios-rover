@@ -18,9 +18,9 @@
     <body class="bg-gray-100 flex flex-col min-h-screen overflow-hidden">
         <div id="splash-screen" class="splash-screen fixed inset-0 bg-white flex items-center justify-center z-50">
             <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900">helios.</h2>
-        </div>    
+        </div>     
         <div>
-            <div class="m-5 mt-8 card-shadow rounded-2xl h-96 border card-border-color overflow-hidden flex flex-col relative text-color card-background-color">
+            <div class="cursor-pointer m-5 mt-8 card-shadow rounded-2xl h-96 border card-border-color overflow-hidden flex flex-col relative text-color card-background-color">
                 <div class="p-4 sticky top-0 z-10">
                    <div class="flex items-center gap-1.5">
                       <div>helios.</div>
@@ -35,7 +35,7 @@
                          <path fill-rule="evenodd" d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z" clip-rule="evenodd"></path>
                       </svg>
                    </div>
-                   <div class="mt-4 text-color-muted" style="color: rgb(3, 48, 31);">Start mapping your farm and provide a path for the rover</div>
+                   <div class="mt-4 mr-3 text-color-muted" style="color: rgb(3, 48, 31);">Start mapping your farm and provide a path for the rover</div>
                 </div>
              </div>
              <div>
@@ -54,9 +54,8 @@
             splashScreen.style.opacity = 0;
             setTimeout(() => {
                 splashScreen.style.display = 'none';
-                mainContent.classList.remove('hidden');
             }, 1000);
-        }, 3000); 
+        }, 1500); 
     });
-
+    
 </script>
