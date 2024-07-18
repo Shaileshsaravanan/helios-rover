@@ -2,7 +2,7 @@ import cv2
 from ultralyticsplus import YOLO
 
 
-model = YOLO('foduucom/plant-leaf-detection-and-classification')
+model = YOLO('plant_detection_yolo.pt')
 model.overrides['conf'] = 0.25  
 model.overrides['iou'] = 0.45
 model.overrides['agnostic_nms'] = False  
