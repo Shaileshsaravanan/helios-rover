@@ -76,12 +76,13 @@ def current_weather():
     response = requests.get(f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,precipitation,cloud_cover,wind_speed_10m&forecast_days=1')
     return response.json()
 
-@app.route('/gemini/weather/one_liner', methods=['POST'])
+@app.route('/gemini/weather/oneliner', methods=['POST'])
 def one_liner():
     data = request.get_json()
     print(data)
     prompt = f"give me a one liner like this: Today is a partly sunny day! for the following weather data:{data}, do not include temperature or any metrics or data"
     response = generate_response(prompt)
+    print(response)
     return response
 
 if __name__ == '__main__':

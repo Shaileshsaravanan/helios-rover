@@ -6,6 +6,7 @@
         <script src="/static/tailwind.js"></script>
         <script src="/static/flowbite.js"></script>
         <style src="/static/flowbite.min.css"></style>
+        <script src="/static/base_gmap.js"></script>
     </head>
     <style>
         .splash-screen {
@@ -16,35 +17,61 @@
         }
     </style>
     <body class="bg-white flex flex-col min-h-screen overflow-hidden">
-        <div id="splash-screen" class="hidden splash-screen fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div id="splash-screen" class="splash-screen fixed inset-0 bg-white flex items-center justify-center z-50">
             <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900">helios.</h2>
         </div>     
         <div class="mx-3 pt-3 pb-2 bg-gradient-to-b from-white to-gray-100 rounded-xl">
-            <button type="button" class="mt-2 flex bg-gray-200 font-medium rounded-full text-sm pl-2 pr-3 py-2 focus:outline-none">
+            <button type="button" class="mt-2 flex bg-gray-100 font-medium rounded-full text-sm pl-2 pr-3 py-2 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5" viewBox="0 0 24 24" fill="none">
                     <path d="M12 21C15.5 17.4 19 14.1764 19 10.2C19 6.22355 15.866 3 12 3C8.13401 3 5 6.22355 5 10.2C5 14.1764 8.5 17.4 12 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span id="location" class="ml-1">Location</span>
+                <span id="location" class="ml-1 text-sm font-normal">Location</span>
             </button>
             <div id="weather_icon" class="mt-10 h-32 flex items-center justify-center"></div>
             <div id="temperature" class="text-center mt-3 text-3xl"></div>
-            <div id="weather_comment" class="text-center text-sm mt-1">Today is a partly sunny day!</div>
+            <div id="weather_oneliner" class="text-center text-sm mt-1"></div>
             <div class="grid grid-cols-3 bg-white flex items-center justify-center py-3 mx-2 flex items-center rounded-xl mt-5">
                 <div class="flex flex-col items-center justify-center">
                     <div id="humidity" class="text-md font-medium"></div>
-                    <div class="text-gray-400 text-sm text-lg"></div>
+                    <div class="text-gray-400 text-sm text-lg">Humidity</div>
                 </div>
                 <div class="flex flex-col items-center justify-center">
                     <div id="precipitation" class="text-md font-medium"></div>
-                    <div class="text-gray-400 text-sm text-lg"></div>
+                    <div class="text-gray-400 text-sm text-lg">Precipitation</div>
                 </div>
                 <div class="flex flex-col items-center justify-center">
                     <div id="wind_speed" class="text-md font-medium"></div>
-                    <div class="text-gray-400 text-sm text-lg"></div>
+                    <div class="text-gray-400 text-sm text-lg">Wind Speed</div>
                 </div>
             </div>
         </div>
+        <div class="cursor-pointer mt-5 rounded-xl h-20 bg-gradient-to-r from-[#bccdc7] to-[#4c7d6a] mx-3 flex items-center px-2">
+            <div class="ml-3 h-12 w-12 rounded-full bg-white flex justify-center items-center">
+                <svg class="h-6" viewBox="0 0 101 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M60.2961 86.0371L55.243 97.6181C53.3002 102.07 47.1444 102.07 45.2015 97.6181L40.1484 86.0371C35.6503 75.7308 27.5562 67.5258 17.4589 63.0425L3.54843 56.865C-0.874216 54.9009 -0.874216 48.464 3.54843 46.4999L17.023 40.514C27.3797 35.9145 35.6201 27.4063 40.0398 16.7485L45.1593 4.40564C47.0584 -0.174277 53.3831 -0.174277 55.2837 4.40564L60.4032 16.7485C64.8229 27.4063 73.0633 35.9145 83.42 40.514L96.8961 46.4999C101.319 48.464 101.319 54.9009 96.8961 56.865L82.9856 63.044C72.8868 67.5258 64.7927 75.7308 60.2961 86.0371Z" fill="url(#paint0_linear_10_4)"/>
+                    <defs>
+                    <linearGradient id="paint0_linear_10_4" x1="63.4272" y1="-20.1396" x2="93.5952" y2="133.128" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#1BA1E3"/>
+                    <stop offset="1" stop-color="#F49C46"/>
+                    </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="text-white ml-5 py-3 w-60">
+                Check our AI recommendation for your fields!
+            </div>
+            <svg class="w-5 h-5 justify-end ml-20 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+            </svg>
+        </div>
+        <div class="mx-3 mt-5">
+            <div class="pl-1 text-xl font-medium">My Farm</div>
+            <div class="">
+                
+            </div>
+        </div>
+        <div id="map"></div>
     </body>   
 </html>
 <script>
@@ -59,8 +86,8 @@
     let user_location = '{{ user_location | tojson | safe }}';
 
     document.addEventListener('DOMContentLoaded', () => {
+        initMap();
         const splashScreen = document.getElementById('splash-screen');
-
         splashScreen.classList.add('zoom-in');
         setTimeout(() => {
             splashScreen.style.opacity = 0;
@@ -68,7 +95,6 @@
                 splashScreen.style.display = 'none';
             }, 1000);
         }, 1500);
-
     });
 
     function getLocation() {
@@ -161,7 +187,8 @@
 
             weatherData = await response.json();
             console.log(weatherData);
-            set_weather_icon()
+            set_weather_icon();
+            getweather_oneliner();
             return weatherData;
         } catch (error) {
             console.error('Error fetching weather data:', error);
@@ -210,10 +237,41 @@
         document.getElementById('weather_icon').innerHTML = icons[weather_condition];
         document.getElementById('humidity').textContent = weatherData.current.relative_humidity_2m + weatherData.current_units.relative_humidity_2m;
         document.getElementById('temperature').textContent = weatherData.current.temperature_2m + weatherData.current_units.temperature_2m;
-        document.getElementById('wind_speed').textContent = weatherData.current.wind_speed_10m + weatherData.current_units.wind_speed_10m;
-        document.getElementById('precipitation').textContent = weatherData.current.precipitation + weatherData.current_units.precipitation;
+        document.getElementById('wind_speed').textContent = weatherData.current.wind_speed_10m + ' '+ weatherData.current_units.wind_speed_10m;
+        document.getElementById('precipitation').textContent = weatherData.current.precipitation + ' '+ weatherData.current_units.precipitation;
     }
      
+    function getweather_oneliner() {
+        fetch('/gemini/weather/oneliner', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(weatherData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            document.getElementById('weather_oneliner').textContent = data;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function initMap() {
+        const center = { lat: user_location.lat, lng: user_location.lon }; 
+
+        const map = new google.maps.Map(document.getElementById("map"), {
+            center: center,
+            zoom: 12,
+        });
+    }
 
     if (user_location == '{"latitude": "none", "longitude": "none"}' || user_location.includes('function')) {
         console.log('User location: ', user_location);
