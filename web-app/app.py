@@ -2,12 +2,25 @@ from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 import requests
 import os
+import google.generativeai as genai
 
 app = Flask(__name__)
  
 user_location = {'latitude': 'none', 'longitude': 'none'}
 load_dotenv()
 OPENWEATHERMAP_API_KEY = os.getenv('OPENWEATHERMAP_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+def generate_response(text):
+    try:
+        response = model.generate_content(text)
+        return response.text.strip()
+    except Exception as e:
+        print(f"Error generating response: {e}")
+        return "Sorry, I couldn't generate a response."
 
 @app.route('/')
 def home():
@@ -62,6 +75,14 @@ def current_weather():
     lon = data['longitude']
     response = requests.get(f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,precipitation,cloud_cover,wind_speed_10m&forecast_days=1')
     return response.json()
+
+@app.route('/gemini/weather/one_liner', methods=['POST'])
+def one_liner():
+    data = request.get_json()
+    print(data)
+    prompt = f"give me a one liner like this: Today is a partly sunny day! for the following weather data:{data}, do not include temperature or any metrics or data"
+    response = generate_response(prompt)
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
