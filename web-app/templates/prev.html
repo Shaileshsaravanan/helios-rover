@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map with Plant Data and Polygon</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css' type='text/css' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js'></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        // Set your Mapbox access token here
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic3Noc2hhaWxlc2giLCJhIjoiY2x5eHMyanl4MW1paTJqcWxnNGZocmV3NSJ9.1QBOeolyujwYbYD7vcpB_w';
+
+        // Initialize the map
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',
+            center: [77.72921841993434, 13.086126522846186], // Center the map around the coordinates
+            zoom: 15
+        });
+
+        // Add navigation controls to the map
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // Define the geojson data for both plants
+        const data = {
+            "type": "FeatureCollection",
+            "features": [
+                // Bittergourd data
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Location where bittergourd plant shows stunted growth, possibly due to nutrient deficiency or root issues.",
+                        "possible_diagnosis": ["Nutrient Deficiency", "Root Rot"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72722231820376, 13.088277208292581],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Bittergourd plant exhibiting yellowing leaves, which may indicate a problem with soil pH or pests.",
+                        "possible_diagnosis": ["Soil pH Imbalance", "Pest Infestation"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72803675082474, 13.088070864855652],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Site with bittergourd plants affected by powdery mildew, characterized by white fungal growth on leaves.",
+                        "possible_diagnosis": ["Powdery Mildew"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72874761397924, 13.087933302467519],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Bittergourd plants here show signs of wilting and leaf drop, potentially due to overwatering or fungal infections.",
+                        "possible_diagnosis": ["Overwatering", "Fungal Infection"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72863462910703, 13.087690275394436],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Location where bittergourd plant roots appear to be decayed, suggesting possible root rot or soil-borne pathogens.",
+                        "possible_diagnosis": ["Root Rot", "Soil-Borne Pathogens"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72743416483962, 13.087754471248473],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Area with bittergourd plants showing curling leaves, which could be due to viral infections or environmental stress.",
+                        "possible_diagnosis": ["Viral Infection", "Environmental Stress"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72840865936263, 13.087318856197712],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Spot where bittergourd plants have malformed fruits, potentially caused by inadequate pollination or nutrient imbalance.",
+                        "possible_diagnosis": ["Pollination Issues", "Nutrient Imbalance"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72897367551064, 13.087772856073016],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Bittergourd plants here are experiencing poor fruit set, which could be due to high temperatures or lack of pollinators.",
+                        "possible_diagnosis": ["High Temperatures", "Lack of Pollinators"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72948681513782, 13.087062115382835],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Location with bittergourd plants showing signs of nutrient burn, likely from excessive fertilization or high soil salinity.",
+                        "possible_diagnosis": ["Nutrient Burn", "High Soil Salinity"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.73013655923461, 13.087384271133146],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Bittergourd plants here are suffering from leaf drop and poor fruit development, which may be due to inconsistent watering or disease.",
+                        "possible_diagnosis": ["Inconsistent Watering", "Disease"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.73021188248276, 13.086934899130583],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Site with bittergourd plants showing signs of leaf spots, potentially due to fungal or bacterial infections.",
+                        "possible_diagnosis": ["Leaf Spot Diseases", "Bacterial Infections"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.73142176215595, 13.086902801098887],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Bittergourd plants in this area display signs of insect damage, such as holes in leaves and poor fruit quality.",
+                        "possible_diagnosis": ["Insect Damage"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72985228553927, 13.086442672075563],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Area where bittergourd plants are showing signs of nutrient deficiency, such as pale leaves and poor growth.",
+                        "possible_diagnosis": ["Nutrient Deficiency"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.73041720990034, 13.085699829362412],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Location with bittergourd plants affected by blight, characterized by dark spots on leaves and stems.",
+                        "possible_diagnosis": ["Blight"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72976283918251, 13.085805294822478],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Spot where bittergourd plants show signs of excessive water stress, such as wilting and leaf discoloration.",
+                        "possible_diagnosis": ["Water Stress"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.7288648826933, 13.08633108857694],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Bittergourd plants at this location exhibit symptoms of viral infection, including mosaic patterns and stunted growth.",
+                        "possible_diagnosis": ["Viral Infection"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.7280220812437, 13.086235803908082],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Area with bittergourd plants affected by poor soil drainage, leading to root rot and yellowing leaves.",
+                        "possible_diagnosis": ["Poor Soil Drainage", "Root Rot"]
+                    },
+                    "geometry": {
+                        "coordinates": [77.72745394276541, 13.086994415437658],
+                        "type": "Point"
+                    }
+                },
+
+                // German turnip data
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Location where German turnip plants show signs of nutrient deficiency, such as stunted growth and discolored leaves. Possible diagnosis: Nutrient Deficiency, Poor Soil Quality."
+                    },
+                    "geometry": {
+                        "coordinates": [77.72770083750254, 13.085975127643735],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "German turnip plants at this site exhibit leaf curl and poor bulb development, which might be caused by inconsistent watering or pest infestation. Possible diagnosis: Inconsistent Watering, Pest Infestation."
+                    },
+                    "geometry": {
+                        "coordinates": [77.7281076750894, 13.085435756024637],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "This location shows German turnip plants with leaf spots and mold growth, potentially due to fungal infections or excessive humidity. Possible diagnosis: Fungal Infection, Excessive Humidity."
+                    },
+                    "geometry": {
+                        "coordinates": [77.72863129013427, 13.08563756186993],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "German turnip plants here are experiencing bulb rot and yellowing leaves, likely caused by poor drainage or overwatering. Possible diagnosis: Bulb Rot, Poor Drainage."
+                    },
+                    "geometry": {
+                        "coordinates": [77.72861622207597, 13.085186250385973],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "Location where German turnip plant roots appear to be decayed, suggesting possible root rot or soil-borne pathogens. Possible diagnosis: Root Rot, Soil-Borne Pathogens."
+                    },
+                    "geometry": {
+                        "coordinates": [77.72904189473763, 13.08437902453268],
+                        "type": "Point"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "description": "German turnip plants at this site display symptoms of bolting and premature flowering, likely caused by high temperatures or stress. Possible diagnosis: High Temperatures, Stress."
+                    },
+                    "geometry": {
+                        "coordinates": [77.73000625050247, 13.084955090525085],
+                        "type": "Point"
+                    }
+                }
+            ]
+        };
+
+        // Add points to the map
+        data.features.forEach((feature) => {
+            const color = feature.properties.description.includes('German turnip') ? '#FF6347' : '#1E90FF'; // Distinct color for German turnip
+            new mapboxgl.Marker({ color: color })
+                .setLngLat(feature.geometry.coordinates)
+                .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(feature.properties.description))
+                .addTo(map);
+        });
+
+        // Define the polygon geojson data
+        const polygon = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "id": "fcd535edd036063e6b4dba5c47426cbd",
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                        "coordinates": [
+                            [
+                                [
+                                    77.72714634818897,
+                                    13.08841182555254
+                                ],
+                                [
+                                    77.72678868010553,
+                                    13.087117852275114
+                                ],
+                                [
+                                    77.72743588901767,
+                                    13.086222020640875
+                                ],
+                                [
+                                    77.72930087259698,
+                                    13.083683813331803
+                                ],
+                                [
+                                    77.73026317006202,
+                                    13.084646012642906
+                                ],
+                                [
+                                    77.73049309954342,
+                                    13.085176879619937
+                                ],
+                                [
+                                    77.73125101524425,
+                                    13.086163957367134
+                                ],
+                                [
+                                    77.73188119234487,
+                                    13.086902189401584
+                                ],
+                                [
+                                    77.73200041503935,
+                                    13.087242273077607
+                                ],
+                                [
+                                    77.72714634818897,
+                                    13.08841182555254
+                                ]
+                            ]
+                        ],
+                        "type": "Polygon"
+                    }
+                }
+            ]
+        };
+
+        // Add the polygon to the map with a faint yellow color and low opacity
+        map.on('load', () => {
+            map.addSource('polygon', {
+                'type': 'geojson',
+                'data': polygon
+            });
+
+            map.addLayer({
+                'id': 'polygon',
+                'type': 'fill',
+                'source': 'polygon',
+                'layout': {},
+                'paint': {
+                    'fill-color': '#FFFF00',
+                    'fill-opacity': 0.4
+                }
+            });
+
+            map.addLayer({
+                'id': 'polygon-outline',
+                'type': 'line',
+                'source': 'polygon',
+                'layout': {},
+                'paint': {
+                    'line-color': '#FFFF00',
+                    'line-width': 2
+                }
+            });
+        });
+    </script>
+</body>
+</html>

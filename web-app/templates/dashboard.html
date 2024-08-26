@@ -6,7 +6,11 @@
         <script src="/static/tailwind.js"></script>
         <script src="/static/flowbite.js"></script>
         <style src="/static/flowbite.min.css"></style>
-        <script src="/static/base_gmap.js"></script>
+        <link href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css" rel="stylesheet">
+        <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+        <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css' type='text/css' />
+        <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/turf/6.5.0/turf.min.js"></script>
     </head>
     <style>
         .splash-screen {
@@ -16,7 +20,7 @@
             transform: scale(1.2);
         }
     </style>
-    <body class="bg-white flex flex-col min-h-screen overflow-hidden">
+    <body class="bg-white overflow-y-scroll flex flex-col min-h-screen overflow-hidden">
         <div id="splash-screen" class="splash-screen fixed inset-0 bg-white flex items-center justify-center z-50">
             <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-gray-900">helios.</h2>
         </div>     
@@ -46,8 +50,8 @@
                 </div>
             </div>
         </div>
-        <div class="cursor-pointer mt-5 rounded-xl h-20 bg-gradient-to-r from-[#bccdc7] to-[#4c7d6a] mx-3 flex items-center px-2">
-            <div class="ml-3 h-12 w-12 rounded-full bg-white flex justify-center items-center">
+        <div onclick="window.location.href='/ai_rec';" class="cursor-pointer mt-5 rounded-xl h-24 bg-gradient-to-r from-[#bccdc7] to-[#4c7d6a] mx-3 flex items-center px-2">
+            <div class="ml-3 min-h-12 min-w-12 rounded-full bg-white flex justify-center items-center">
                 <svg class="h-6" viewBox="0 0 101 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M60.2961 86.0371L55.243 97.6181C53.3002 102.07 47.1444 102.07 45.2015 97.6181L40.1484 86.0371C35.6503 75.7308 27.5562 67.5258 17.4589 63.0425L3.54843 56.865C-0.874216 54.9009 -0.874216 48.464 3.54843 46.4999L17.023 40.514C27.3797 35.9145 35.6201 27.4063 40.0398 16.7485L45.1593 4.40564C47.0584 -0.174277 53.3831 -0.174277 55.2837 4.40564L60.4032 16.7485C64.8229 27.4063 73.0633 35.9145 83.42 40.514L96.8961 46.4999C101.319 48.464 101.319 54.9009 96.8961 56.865L82.9856 63.044C72.8868 67.5258 64.7927 75.7308 60.2961 86.0371Z" fill="url(#paint0_linear_10_4)"/>
                     <defs>
@@ -59,7 +63,7 @@
                 </svg>
             </div>
             <div class="text-white ml-5 py-3 w-60">
-                Check our AI recommendation for your fields!
+                Check our AI recommendation for your farm!
             </div>
             <svg class="w-5 h-5 justify-end ml-20 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                 <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M1 5h12m0 0L9 1m4 4L9 9"/>
@@ -67,11 +71,10 @@
         </div>
         <div class="mx-3 mt-5">
             <div class="pl-1 text-xl font-medium">My Farm</div>
-            <div class="">
-                
+            <div class="mb-5">
+                <div style="height: 40vh; width: 100%;" class="bg-blue-600 mt-2 rounded-xl" id="map"></div>
             </div>
         </div>
-        <div id="map"></div>
     </body>   
 </html>
 <script>
@@ -86,7 +89,6 @@
     let user_location = '{{ user_location | tojson | safe }}';
 
     document.addEventListener('DOMContentLoaded', () => {
-        initMap();
         const splashScreen = document.getElementById('splash-screen');
         splashScreen.classList.add('zoom-in');
         setTimeout(() => {
@@ -95,6 +97,7 @@
                 splashScreen.style.display = 'none';
             }, 1000);
         }, 1500);
+        { passive: true }
     });
 
     function getLocation() {
@@ -264,14 +267,7 @@
         });
     }
 
-    function initMap() {
-        const center = { lat: user_location.lat, lng: user_location.lon }; 
-
-        const map = new google.maps.Map(document.getElementById("map"), {
-            center: center,
-            zoom: 12,
-        });
-    }
+    
 
     if (user_location == '{"latitude": "none", "longitude": "none"}' || user_location.includes('function')) {
         console.log('User location: ', user_location);
@@ -283,5 +279,304 @@
         location_text.textContent = `${capitalizeEachWord(user_location.name)}, ${capitalizeEachWord(user_location.state)}`;
         getCurrentWeather()
     }
+
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3Noc2hhaWxlc2giLCJhIjoiY2x5eHMyanl4MW1paTJqcWxnNGZocmV3NSJ9.1QBOeolyujwYbYD7vcpB_w';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: [77.72921841993434, 13.086126522846186],
+      zoom: 15
+    });
+
+    geojson = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": "fcd535edd036063e6b4dba5c47426cbd",
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              77.72714634818897,
+              13.08841182555254
+            ],
+            [
+              77.72678868010553,
+              13.087117852275114
+            ],
+            [
+              77.72743588901767,
+              13.086222020640875
+            ],
+            [
+              77.72930087259698,
+              13.083683813331803
+            ],
+            [
+              77.73026317006202,
+              13.084646012642906
+            ],
+            [
+              77.73049309954342,
+              13.085176879619937
+            ],
+            [
+              77.73125101524425,
+              13.086163957367134
+            ],
+            [
+              77.73188119234487,
+              13.086902189401584
+            ],
+            [
+              77.73200041503935,
+              13.087242273077607
+            ],
+            [
+              77.72714634818897,
+              13.08841182555254
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    },
+    {
+      "id": "c9318d8b7c9c7e62932ec3b358535793",
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            77.72718015440768,
+            13.088367301561703
+          ],
+          [
+            77.72882745689867,
+            13.087969881314066
+          ],
+          [
+            77.72877873815662,
+            13.087800829224136
+          ],
+          [
+            77.72714057042884,
+            13.088189352276885
+          ],
+          [
+            77.72708271692107,
+            13.088023266160434
+          ],
+          [
+            77.72869652527783,
+            13.087631777016966
+          ],
+          [
+            77.72863562684898,
+            13.087447895539043
+          ],
+          [
+            77.72704008802106,
+            13.087857179933224
+          ],
+          [
+            77.72699441420013,
+            13.087711854392651
+          ],
+          [
+            77.72858386318455,
+            13.087278843089805
+          ],
+          [
+            77.72851687491362,
+            13.087083098004612
+          ],
+          [
+            77.72695483022119,
+            13.087513143821056
+          ],
+          [
+            77.72691130300797,
+            13.087323904843515
+          ],
+          [
+            77.72845758484084,
+            13.08687809326328
+          ],
+          [
+            77.7283709930582,
+            13.086631089201816
+          ],
+          [
+            77.72688656249903,
+            13.087107023635454
+          ],
+          [
+            77.72710304195544,
+            13.086787725952135
+          ],
+          [
+            77.72828523084138,
+            13.086454808172363
+          ],
+          [
+            77.72818171417259,
+            13.086118713636651
+          ],
+          [
+            77.72737932850163,
+            13.086381903340182
+          ],
+          [
+            77.72756362444039,
+            13.086157516063778
+          ],
+          [
+            77.72810581412438,
+            13.085980886949585
+          ],
+          [
+            77.72880788749353,
+            13.087867775726579
+          ],
+          [
+            77.73005601792732,
+            13.087563848309742
+          ],
+          [
+            77.72990000162412,
+            13.087095292805898
+          ],
+          [
+            77.72869087526584,
+            13.087449875430593
+          ],
+          [
+            77.72856086167826,
+            13.087044638103023
+          ],
+          [
+            77.72973098396108,
+            13.08670271858989
+          ],
+          [
+            77.72945795542881,
+            13.08620883401106
+          ],
+          [
+            77.7283528399397,
+            13.086563417912345
+          ],
+          [
+            77.72811881548284,
+            13.086006214410972
+          ],
+          [
+            77.72917969215712,
+            13.085599530623725
+          ],
+          [
+            77.73043487865158,
+            13.085238107586846
+          ],
+          [
+            77.73075576247322,
+            13.085863210508805
+          ],
+          [
+            77.72950788094619,
+            13.086245217070399
+          ],
+          [
+            77.7297931110104,
+            13.086766134154303
+          ],
+          [
+            77.73111230005202,
+            13.086418856220746
+          ],
+          [
+            77.73171841393588,
+            13.08697450068
+          ],
+          [
+            77.73004268731546,
+            13.08746068855362
+          ],
+          [
+            77.72893742081965,
+            13.084508818839879
+          ],
+          [
+            77.72797476935693,
+            13.085793754706984
+          ],
+          [
+            77.73000703355626,
+            13.084925555530504
+          ],
+          [
+            77.72925830464118,
+            13.084265722111695
+          ],
+          [
+            77.72897307457885,
+            13.084543546923754
+          ]
+        ],
+        "type": "LineString"
+      }
+    }
+  ]
+}
+        map.on('load', function () {
+            map.addSource('geojson-data', {
+                'type': 'geojson',
+                'data': geojson
+            });
+
+            // Add Polygon Layer
+            map.addLayer({
+            'id': 'polygon',
+            'type': 'fill',
+            'source': 'geojson-data',
+            'paint': {
+                'fill-color': '#FFFF00', // Yellow
+                'fill-opacity': 0.3
+            },
+            'filter': ['==', '$type', 'Polygon']
+        });
+
+        // Add LineString Layer with red dotted lines
+        map.addLayer({
+            'id': 'line',
+            'type': 'line',
+            'source': 'geojson-data',
+            'paint': {
+                'line-color': '#FF0000', // Red
+                'line-width': 2,
+                'line-dasharray': [2, 2],
+                'line-opacity': 0.8
+            },
+            'filter': ['==', '$type', 'LineString']
+        });
+            // Add popups
+            geojson.features.forEach(function(feature) {
+                var coordinates = feature.geometry.type === 'Polygon'
+                    ? feature.geometry.coordinates[0][0]
+                    : feature.geometry.coordinates[0];
+                
+                var el = document.createElement('div');
+                el.className = 'marker';
+
+                new mapboxgl.Marker(el)
+                    .setLngLat(coordinates)
+                    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                    .setHTML('<h3>' + feature.properties.title + '</h3><p>' + feature.properties.description + '</p>'))
+                    .addTo(map);
+            });
+        });
 
 </script>
