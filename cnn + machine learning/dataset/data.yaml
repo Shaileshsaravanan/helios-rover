@@ -1,0 +1,6 @@
+train: cnn + machine learning/dataset/train/images
+val: cnn + machine learning/dataset/valid/images
+test: cnn + machine learning/dataset/test/images
+
+nc: 1
+names: ['plant']
