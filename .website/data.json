@@ -1,5 +1,7 @@
 {
     "type": "mechanica",
     "preview": "glb",
-    "desc": "autonomous agro rover project"
+    "desc": "autonomous agro rover project",
+    "mainColour": "#2F5D8A", 
+    "subColour": "#9DB9D6"
 }
