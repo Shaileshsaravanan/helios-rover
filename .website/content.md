@@ -1,4 +1,4 @@
-helios was built by me and my friend dhruv for the **Hackhive Hackathon (2024)**, where it went on to win the competition, and i've posted it [here](https://www.instagram.com/p/C-EehrsyX0g).
+helios was built by me and dhruv for the **Hackhive Hackathon (2024)**, where it went on to win the competition, and i've posted it [here](https://www.instagram.com/p/C-EehrsyX0g).
 
 helios is an autonomous agricultural rover built for field use. it is designed to move through farmland, monitor plant health, detect diseases using machine learning, and make data about crops easier to see and understand. the rover can run on its own or be controlled remotely through a web interface, with live video, sensors, and mapping all connected into a single system.
 
