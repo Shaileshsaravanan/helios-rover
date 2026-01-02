@@ -1,32 +1,51 @@
 # Helios Rover Project
 
 ## Project Overview
+The **Helios Rover** is a fully autonomous agricultural rover designed to monitor crops, detect plant diseases using machine learning, and support precision farming. It integrates onboard sensors, ML-based plant health analysis, real-time mapping, and a comprehensive Flask-based web interface that enables full remote control and live data visualization. All software, hardware design files, and deployment resources are included in this repository.
 
-The **Helios Rover** is a work-in-progress project aimed at creating a fully autonomous rover equipped with a web-based interface for remote control and data visualization. The rover will utilize various sensors and actuators, and is designed to be controlled via a Flask-based web application. The project is still under development, and as it progresses, all components and documentation will be fully updated and operational.
+![Helios Rover](rover.png)
+
+## Key Capabilities
+- Fully autonomous rover navigation and manual remote control mode
+- Machine learning–based crop disease detection
+- Real-time video feed and sensor telemetry
+- Google Maps–based farm mapping and rover path visualization using the Maps API
+- Web dashboard for control, visualization, logging, and insights
+- Production-ready, field-tested implementation
+- Complete mechanical design files included for fabrication and assembly
 
 ## Repository Structure
 
 - **3D Structural Stuff**
-  - This folder contains the 3D files required for the physical assembly of the Helios Rover. These files are essential for constructing the rover's body and mounting various components.
+  - Contains all 3D-printable components required to build the rover chassis, mounts, and structural body.
 
 - **Base_Code**
-  - This folder includes the basic implementations of various functions that will be integrated into the rover's control system. The code here provides the foundational logic for the rover's operations, but is not yet fully functional.
+  - Core logic modules and foundational control systems used across the rover’s functionality.
 
 - **Webapp**
-  - The webapp folder hosts a Flask-based web application designed to interface with the Helios Rover. The web app will allow users to remotely control the rover and view real-time data from its sensors. As the project develops, this application will be expanded with more features and improved user experience.
+  - Flask-based application for rover control, live monitoring, data visualization, and ML inference display.
 
 - **Helios**
-  - This folder contains the `helios.ino` file, which is the main Arduino code that will run on the rover. The code currently implements basic functionality and will be enhanced as the project progresses.
+  - Contains the main Arduino firmware (`helios.ino`) responsible for rover control, sensor management, and communication.
 
-## Work in Progress
+## System Features
 
-Please note that this project is currently under development. The code, 3D models, and web application are not yet finalized, and some features may not work as intended. Updates will be made as the project moves towards completion.
+- **Autonomous and Manual Control**
+  - Supports path execution, obstacle handling, and operator override through the web UI.
 
-## Future Updates
+- **Machine Learning Disease Detection**
+  - Processes captured plant images to identify disease patterns and generate alerts and insights.
 
-- Complete integration of sensor data and actuator controls.
-- Enhancements to the Flask web application for better user interaction.
-- Optimization of the `helios.ino` code for improved performance.
-- Finalization of the 3D model for the rover structure.
+- **Mapping and Localization**
+  - Integrates Google Maps API for visualizing farm layout, rover positioning, and travel history.
 
-Stay tuned for updates as we continue to work on the Helios Rover project!
+- **Data Visualization**
+  - Displays camera feeds, health analytics, and sensor metrics in real time.
+
+## Future Extensions
+- Enhanced ML models for more crop varieties
+- Edge acceleration and optimization
+- Advanced autonomous behaviors
+
+---
+Helios Rover — autonomous intelligence for smart farming.
